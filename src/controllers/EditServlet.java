@@ -14,16 +14,16 @@ import models.task;
 import utils.DBUtil;
 
 /**
- * Servlet implementation class ShowServlet
+ * Servlet implementation class EditServlet
  */
-@WebServlet("/show")
-public class ShowServlet extends HttpServlet {
+@WebServlet("/edit")
+public class EditServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ShowServlet() {
+    public EditServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -35,15 +35,19 @@ public class ShowServlet extends HttpServlet {
         // TODO Auto-generated method stub
         EntityManager em = DBUtil.createEntityManager();
 
-        //該当のIDのタスク一件のみをデータベースから取得
+        //該当のIDタスク一件のみをデータベースから取得
         task m = em.find(task.class, Integer.parseInt(request.getParameter("id")));
+
         em.close();
 
-        //タスクデータをリクエストスコープにセットしてshow.jspを表示
+        //タスク情報とセッションIDをリクエストスコープに登録
         request.setAttribute("task", m);
+        request.setAttribute("_token", request.getSession().getId());
 
-        RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/tasks/show.jsp");
+        //タスクIDをセッションスコープに登録
+        request.getSession().setAttribute("task_id",m.getId());
+
+        RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/tasks/edit.jsp");
         rd.forward(request, response);
-
     }
 }
